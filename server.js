@@ -1,12 +1,13 @@
 var express = require('express')
 var bodyParser = require('body-parser');
 var http = require('https');
+const API_ACCESS_TOKEN = process.env.APIGRAPH_ACCESS_TOKEN;
 
 var options = {
   host: 'graph.facebook.com',
   path: '/v13.0/109844545118491/messages',
   headers: {
-	  'Authorization': 'Bearer EAAMyDtny59sBAI6PgS0v3nifjlEnhoJGBBBXSvp7n7ZCxhUN9koaxSZA6gYhkyzwnwIKtL1iqnbuErl5RpxszzkXrXqZCD3Qy47GiWHDZBnhwLmIa4Esim67EtIZALXlzBQslHH1jHXezmTzdyJoUZBZA9YrWZAc98z3gAIIpZAKGc1meeAGaZBMjvirbsEtNQNmyARG7P6aeZBA42qYZAPP64k0',
+	  'Authorization': `Bearer ${API_ACCESS_TOKEN}`,
 	  'Content-Type': 'application/json' },
   method: 'POST'
 };
@@ -42,4 +43,5 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`App started on PORT ${PORT}`);
+  console.log(`Api Graph access token: ${API_ACCESS_TOKEN}`)
 });
