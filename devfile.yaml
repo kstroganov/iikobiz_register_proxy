@@ -48,5 +48,3 @@ commands:
       group:
         kind: deploy
         isDefault: true
-envs:
-  - value: '{{ secret:environment.variables }}'

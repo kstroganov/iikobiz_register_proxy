@@ -28,11 +28,16 @@ var app = express();
 app.use(bodyParser.json());
 
 app.post('/register', function(request, response) {
-   var req = http.request(options, callback);
-   req.write('{ "messaging_product": "whatsapp", "to": "789160378158", "type": "template", "template": { "name": "hello_world", "language": { "code": "en_US" } } }');
-   req.end();
-   console.log(request.body);      // your JSON
-   response.send(request.body);    // echo the result back
+  if (request.body.text)
+  {
+    var req = http.request(options, callback);
+    req.write(`{ "messaging_product": "whatsapp", "to": "789160378158", "type": "text", "text": { "preview_url": false, "body": "${request.body.text}" } }`);
+    req.end();
+  }
+  else
+    console.log("Unexpected request. Couldn't find text field in body");
+  console.log(request.body);      // your JSON
+  response.send(request.body);    // echo the result back
 });
 app.get('/', (req, res) => {
   // Use req.log (a `pino` instance) to log JSON:
