@@ -42,7 +42,7 @@ app.post('/register', function(request, response) {
       console.log(`Extracted code: ${code} will be send to: ${phone}`);
       var req = http.request(options, callback);
       req.on('error', (err) => console.log("Couldn't send Whatsapp message:", err));
-      req.write(`{ "messaging_product": "whatsapp", "to": "${phone}", "type": "template", "template": { "name": "account_confirmation_code", "language": { "code": "RU" }, "components": [ { "type": "BODY", "parameters": [ { "type": "text", "text": "${code}" } ] } ] } }`);
+      req.write(`{ "messaging_product": "whatsapp", "to": "${phone}", "type": "template", "template": { "name": "account_confirmation_code_v2", "language": { "code": "RU" }, "components": [ { "type": "BODY", "parameters": [ { "type": "text", "text": "${code}" } ] } ] } }`);
       req.end();
     }
     else
