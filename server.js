@@ -28,14 +28,17 @@ var app = express();
 app.use(bodyParser.json());
 
 app.post('/register', function(request, response) {
-  if (request.body.text)
+  if (request.body.text && request.body.sender)
   {
+    var code = request.body.text.split(' ').pop();
+    var phone = request.body.sender.substring(1);
+    console.log(`Extracted code: ${code} will be send to: ${phone}`);
     var req = http.request(options, callback);
-    req.write(`{ "messaging_product": "whatsapp", "to": "789160378158", "type": "text", "text": { "preview_url": false, "body": "${request.body.text}" } }`);
+    req.write(`{ "messaging_product": "whatsapp", "to": "${sender}", "type": "template", "template": { "name": "account_confirmation_code", "language": { "code": "RU" }, "components": [ { "type": "text", "text": "${code}" } ] } }`);
     req.end();
   }
   else
-    console.log("Unexpected request. Couldn't find text field in body");
+    console.log("Unexpected request. Couldn't find text or sender field(s) in body");
   console.log(request.body);      // your JSON
   response.send(request.body);    // echo the result back
 });
