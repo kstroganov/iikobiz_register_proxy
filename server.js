@@ -17,6 +17,9 @@ callback = function(response) {
   response.on('data', function (chunk) {
     str += chunk;
   });
+  response.on('error', (err) => {
+    console.log(err);
+  });
 
   response.on('end', function () {
     console.log(str);
@@ -34,7 +37,10 @@ app.post('/register', function(request, response) {
     var phone = request.body.sender.substring(1);
     console.log(`Extracted code: ${code} will be send to: ${phone}`);
     var req = http.request(options, callback);
-    req.write(`{ "messaging_product": "whatsapp", "to": "${sender}", "type": "template", "template": { "name": "account_confirmation_code", "language": { "code": "RU" }, "components": [ { "type": "text", "text": "${code}" } ] } }`);
+    req.on('error', (err) => {
+      console.log("Couldn't send Whatsapp message:", err);
+    });
+    req.write(`{ "messaging_product": "whatsapp", "to": "${phone}", "type": "template", "template": { "name": "account_confirmation_code", "language": { "code": "RU" }, "components": [ { "type": "text", "text": "${code}" } ] } }`);
     req.end();
   }
   else
