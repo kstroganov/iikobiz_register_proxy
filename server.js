@@ -1,6 +1,7 @@
-var express = require('express')
-var bodyParser = require('body-parser');
-var http = require('https');
+const libphonenumber = require('libphonenumber-js');
+const express = require('express')
+const bodyParser = require('body-parser');
+const http = require('https');
 const API_ACCESS_TOKEN = process.env.APIGRAPH_ACCESS_TOKEN;
 
 var options = {
@@ -34,14 +35,18 @@ app.post('/register', function(request, response) {
   if (request.body.text && request.body.sender)
   {
     var code = request.body.text.split(' ').pop();
-    var phone = request.body.sender.substring(1);
-    console.log(`Extracted code: ${code} will be send to: ${phone}`);
-    var req = http.request(options, callback);
-    req.on('error', (err) => {
-      console.log("Couldn't send Whatsapp message:", err);
-    });
-    req.write(`{ "messaging_product": "whatsapp", "to": "${phone}", "type": "template", "template": { "name": "account_confirmation_code", "language": { "code": "RU" }, "components": [ { "type": "BODY", "parameters": [ { "type": "text", "text": "${code}" } ] } ] } }`);
-    req.end();
+    const phoneNumber = libphonenumber.parsePhoneNumber(request.body.sender);
+    if (phoneNumber && phoneNumber.isValid()) 
+    {
+      var phone = phoneNumber.countryCallingCode + '8' + phoneNumber.nationalNumber;
+      console.log(`Extracted code: ${code} will be send to: ${phone}`);
+      var req = http.request(options, callback);
+      req.on('error', (err) => console.log("Couldn't send Whatsapp message:", err));
+      req.write(`{ "messaging_product": "whatsapp", "to": "${phone}", "type": "template", "template": { "name": "account_confirmation_code", "language": { "code": "RU" }, "components": [ { "type": "BODY", "parameters": [ { "type": "text", "text": "${code}" } ] } ] } }`);
+      req.end();
+    }
+    else
+      console.log('Invalid phone number: ', request.body.sender);
   }
   else
     console.log("Unexpected request. Couldn't find text or sender field(s) in body");
