@@ -38,7 +38,8 @@ app.post('/register', function(request, response) {
     const phoneNumber = libphonenumber.parsePhoneNumber(request.body.sender);
     if (phoneNumber && phoneNumber.isValid()) 
     {
-      var phone = phoneNumber.countryCallingCode + '8' + phoneNumber.nationalNumber;
+      var phone = (phoneNumber.countryCallingCode == 7 ? phoneNumber.countryCallingCode + '8' + phoneNumber.nationalNumber
+                                                       : phoneNumber.countryCallingCode + phoneNumber.nationalNumber);
       console.log(`Extracted code: ${code} will be send to: ${phone}`);
       var req = http.request(options, callback);
       req.on('error', (err) => console.log("Couldn't send Whatsapp message:", err));
