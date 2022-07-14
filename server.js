@@ -32,10 +32,10 @@ var app = express();
 app.use(bodyParser.json());
 
 app.post('/register', function(request, response) {
-  if (request.body.text && request.body.sender)
+  if (request.body.text && request.body.phone)
   {
     var code = request.body.text.split(' ').pop();
-    const phoneNumber = libphonenumber.parsePhoneNumber(request.body.sender);
+    const phoneNumber = libphonenumber.parsePhoneNumber(request.body.phone);
     if (phoneNumber && phoneNumber.isValid()) 
     {
       var phone = (phoneNumber.countryCallingCode == 7 ? phoneNumber.countryCallingCode + '8' + phoneNumber.nationalNumber
@@ -47,10 +47,10 @@ app.post('/register', function(request, response) {
       req.end();
     }
     else
-      console.log('Invalid phone number: ', request.body.sender);
+      console.log('Invalid phone number: ', request.body.phone);
   }
   else
-    console.log("Unexpected request. Couldn't find text or sender field(s) in body");
+    console.log("Unexpected request. Couldn't find text or phone field(s) in body");
   console.log(request.body);      // your JSON
   response.send(request.body);    // echo the result back
 });
