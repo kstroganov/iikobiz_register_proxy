@@ -3,10 +3,14 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const http = require('https');
 const API_ACCESS_TOKEN = process.env.APIGRAPH_ACCESS_TOKEN;
+const SENDER_PHONE_NUMBER_ID = process.env.SENDER_PHONE_NUMBER_ID;
+const MSG_TEMPLATE_NAME = process.env.MSG_TEMPLATE_NAME;
+const MSG_TEMPLATE_LANG = process.env.MSG_TEMPLATE_LANG || 'RU';
+const PORT = process.env.PORT || 3000;
 
 var options = {
   host: 'graph.facebook.com',
-  path: '/v13.0/109844545118491/messages',
+  path: `/v13.0/${SENDER_PHONE_NUMBER_ID}/messages`,
   headers: {
 	  'Authorization': `Bearer ${API_ACCESS_TOKEN}`,
 	  'Content-Type': 'application/json' },
@@ -43,7 +47,7 @@ app.post('/register', function(request, response) {
       console.log(`Extracted code: ${code} will be send to: ${phone}`);
       var req = http.request(options, callback);
       req.on('error', (err) => console.log("Couldn't send Whatsapp message:", err));
-      req.write(`{ "messaging_product": "whatsapp", "to": "${phone}", "type": "template", "template": { "name": "account_confirmation_code_v2", "language": { "code": "RU" }, "components": [ { "type": "BODY", "parameters": [ { "type": "text", "text": "${code}" } ] } ] } }`);
+      req.write(`{ "messaging_product": "whatsapp", "to": "${phone}", "type": "template", "template": { "name": "${MSG_TEMPLATE_NAME}", "language": { "code": "${MSG_TEMPLATE_LANG}" }, "components": [ { "type": "BODY", "parameters": [ { "type": "text", "text": "${code}" } ] } ] } }`);
       req.end();
     }
     else
@@ -59,9 +63,11 @@ app.get('/', (req, res) => {
   res.send('This message is displayed for testing purposes.');
 });
 
-const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`App started on PORT ${PORT}`);
-  console.log(`Api Graph access token: ${API_ACCESS_TOKEN}`)
+  console.log(`Api Graph access token: ${API_ACCESS_TOKEN}`);
+  console.log(`Sender phone number ID: ${SENDER_PHONE_NUMBER_ID}`);
+  console.log(`Message template name: ${MSG_TEMPLATE_NAME}`);
+  console.log(`Message template language: ${MSG_TEMPLATE_LANG}`);
 });
