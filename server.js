@@ -36,10 +36,10 @@ var app = express();
 app.use(bodyParser.json());
 
 app.post('/register', function(request, response) {
-  if (request.body.text && request.body.phone)
+  if (request.body.text && (request.body.phone || request.body.sender))
   {
     var code = request.body.text.split(' ').pop();
-    const phoneNumber = libphonenumber.parsePhoneNumber(request.body.phone);
+    const phoneNumber = libphonenumber.parsePhoneNumber(request.body.phone ? request.body.phone : request.body.sender);
     if (phoneNumber && phoneNumber.isValid()) 
     {
       var phone = (phoneNumber.countryCallingCode == 7 ? phoneNumber.countryCallingCode + '8' + phoneNumber.nationalNumber
