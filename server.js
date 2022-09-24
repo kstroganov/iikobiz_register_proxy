@@ -36,6 +36,7 @@ var app = express();
 app.use(bodyParser.json());
 
 app.post('/register', function(request, response) {
+  console.log(request.body);      // your JSON
   if (request.body.text && (request.body.phone || request.body.sender))
   {
     var code = request.body.text.split(' ').pop();
@@ -55,7 +56,6 @@ app.post('/register', function(request, response) {
   }
   else
     console.log("Unexpected request. Couldn't find text or phone field(s) in body");
-  console.log(request.body);      // your JSON
   response.send(request.body);    // echo the result back
 });
 app.get('/', (req, res) => {
